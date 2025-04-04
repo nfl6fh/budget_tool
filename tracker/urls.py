@@ -13,4 +13,7 @@ urlpatterns = [
     path("delete_source/<int:source_id>/", views.delete_source, name="delete_source"),
     path("delete_category/<int:category_id>/", views.delete_category, name="delete_category"),
     path("delete_transaction/<int:transaction_id>/", views.delete_transaction, name="delete_transaction"),
+    path("reports/", views.reports_view, name="reports"),
+    path("import-preview/", views.import_csv_preview, name="import_csv_preview"),
+    path("import-confirm/", views.import_csv_confirm, name="import_csv_confirm"),
 ]

@@ -42,6 +42,7 @@
             <tr>
               <th>Name</th>
               <th>Budget</th>
+              <th>Implied Annual Budget
               <th>Actions</th>
             </tr>
           </thead>
@@ -54,9 +55,15 @@
                     {% if category.budget >= 0 %}
                     ${{ category.budget|floatformat:0|intcomma }}
                     {% else %}
-                    -${{ category.negative_budget|add:"-1"|floatformat:0|intcomma }}
+                    -${{ category.negative_budget|floatformat:0|intcomma }}
                     {% endif %}
                   </td>
+                  <td>
+                    {% if category.annual_budget >= 0 %}
+                    ${{ category.annual_budget|floatformat:0|intcomma }}
+                    {% else %}
+                    -${{ category.annual_negative_budget|floatformat:0|intcomma }}
+                    {% endif %}
                   <td>
                     <button class="btn btn-sm btn-warning edit-category-btn" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-id="{{ category.id }}" data-name="{{ category.name }}" data-amount="{{ category.budget }}">Edit</button>
                     <button class="btn btn-sm btn-danger delete-btn" data-url="{% url 'delete_category' category.id %}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
@@ -69,6 +76,12 @@
         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
       </div>
     </div>
+    <form method="post" enctype="multipart/form-data" action="{% url 'import_csv_preview' %}" style="margin: 20px auto; text-align: center;">
+      {% csrf_token %}
+      <input type="file" name="csv_file" accept=".csv" required>
+      <button type="submit">Preview CSV</button>
+    </form>
+    
   </div>
 
   <script>
