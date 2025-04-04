@@ -1,0 +1,169 @@
+{% include './navbar.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>Settings</h2>
+
+    <!-- Sources Section -->
+    <div class="my-4">
+      <h4>Sources</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if sources %}
+            {% for source in sources %}
+              <tr>
+                <td>{{ source.name }}</td>
+                <td>
+                  <!-- Example for Sources -->
+                  <button class="btn btn-sm btn-warning edit-source-btn" data-bs-toggle="modal" data-bs-target="#editSourceModal" data-id="{{ source.id }}" data-name="{{ source.name }}">Edit</button>
+                  <button class="btn btn-sm btn-danger delete-btn" data-url="{% url 'delete_source' source.id %}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
+                </td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addSourceModal">Add Source</button>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="my-4">
+      <h4>Categories</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if categories %}
+            {% for category in categories %}
+              <tr>
+                <td>{{ category.name }}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning edit-category-btn" data-bs-toggle="modal" data-bs-target="#editCategoryModal" data-id="{{ category.id }}" data-name="{{ category.name }}">Edit</button>
+                  <button class="btn btn-sm btn-danger delete-btn" data-url="{% url 'delete_category' category.id %}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
+                </td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+    </div>
+
+    <!-- Transactions Section -->
+    <div class="my-4">
+      <h4>Transactions</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+            <tr>
+              <td>{{ transaction.description }}</td>
+              <td>${{ transaction.amount|floatformat:2 }}</td>
+              <td>{{ transaction.date }}</td>
+              <td>{{ transaction.category.name }}</td>
+              <td>
+                <button class="btn btn-sm btn-warning edit-transaction-btn" data-bs-toggle="modal" data-bs-target="#editTransactionModal" data-id="{{ transaction.id }}" data-description="{{ transaction.description }}" data-amount="{{ transaction.amount }}" data-date="{{ transaction.date }}" data-category="{{ transaction.category.name }}" data-source="{{ transaction.source.name }}">Edit</button>
+                <button class="btn btn-sm btn-danger delete-btn" data-url="{% url 'delete_transaction' transaction.id %}" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">Add Transaction</button>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const editSourceButtons = document.querySelectorAll('.edit-source-btn')
+      const editSourceForm = document.getElementById('editSourceForm')
+      const nameInput = document.getElementById('editSourceName')
+    
+      editSourceButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const sourceId = button.getAttribute('data-id')
+          const sourceName = button.getAttribute('data-name')
+          nameInput.value = sourceName
+          editSourceForm.action = `/edit_source/${sourceId}/` // Update if using {% url %}
+        })
+      })
+    })
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      const editCategoryButtons = document.querySelectorAll('.edit-category-btn')
+      const editCategoryForm = document.getElementById('editCategoryForm')
+      const nameInput = document.getElementById('editCategoryName')
+    
+      editCategoryButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const categoryId = button.getAttribute('data-id')
+          const categoryName = button.getAttribute('data-name')
+          nameInput.value = categoryName
+          editCategoryForm.action = `/edit_category/${categoryId}/` // Update if using {% url %}
+        })
+      })
+    })
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      const editButtons = document.querySelectorAll('.edit-transaction-btn')
+      const form = document.getElementById('editTransactionForm')
+    
+      const description = document.getElementById('editDescription')
+      const amount = document.getElementById('editAmount')
+      const date = document.getElementById('editDate')
+      const category = document.getElementById('editCategory')
+      const source = document.getElementById('editSource')
+    
+      editButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const id = button.getAttribute('data-id')
+          form.action = `/edit_transaction/${id}/` // Adjust if using {% url %}
+    
+          description.value = button.getAttribute('data-description')
+          amount.value = button.getAttribute('data-amount')
+          date.value = button.getAttribute('data-date')
+          category.value = button.getAttribute('data-category')
+          source.value = button.getAttribute('data-source')
+        })
+      })
+    })
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      const deleteButtons = document.querySelectorAll('.delete-btn')
+      const deleteForm = document.getElementById('confirmDeleteForm')
+    
+      deleteButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const url = button.getAttribute('data-url')
+          deleteForm.action = url
+        })
+      })
+    })
+  </script>
+
+  {% include './modals/add_category.html' %}
+  {% include './modals/add_source.html' %}
+  {% include './modals/add_transaction.html' %}
+  {% include './modals/edit_source.html' %}
+  {% include './modals/edit_category.html' %}
+  {% include './modals/edit_transaction.html' %}
+  {% include './modals/confirm_delete.html' %}
+{% endblock %}

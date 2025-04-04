@@ -1,0 +1,7 @@
+db.sqlite3
+pyvenv.cfg
+__pycache__/
+bin/
+include/
+lib/
+.DS_Store
